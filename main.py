@@ -24,6 +24,7 @@ def cleanup_old_files(directory, age_limit_seconds=20):
 
 def main():
     st.title('YouTube Video Downloader')
+    st.text('by Helio Nogueira Cardoso')
     url = st.text_input('Enter YouTube URL')
     if st.button('Download'):
         filepath = download_video(url)
