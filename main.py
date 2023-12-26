@@ -14,7 +14,7 @@ def download_video(url):
         return temp_file.name
     return None
 
-def cleanup_old_files(directory, file_extension='.mp4', age_limit_seconds=20):
+def cleanup_old_files(directory, file_extension='.mp4', age_limit_seconds=5):
     """Deletes files with a specific extension and older than 'age_limit_seconds' in the given directory."""
     current_time = time.time()
     for filename in os.listdir(directory):
@@ -28,6 +28,8 @@ def main():
     st.text('by Helio Nogueira Cardoso')
     url = st.text_input('Enter YouTube URL')
     if st.button('Download'):
+        # Schedule a cleanup for old files
+        cleanup_old_files(gettempdir())
         filepath = download_video(url)
         if filepath:
             st.success('Download successful! Click below to download the video to your device.')
@@ -39,8 +41,6 @@ def main():
                     file_name="downloaded_video.mp4",
                     mime="video/mp4"
                 )
-            # Schedule a cleanup for old files
-            cleanup_old_files(gettempdir())
         else:
             st.error('Download failed. Check the URL and try again.')
 
