@@ -2,7 +2,7 @@ import streamlit as st
 from pytube import YouTube
 import os
 import time
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, gettempdir
 
 def download_video(url):
     yt = YouTube(url)
@@ -14,13 +14,14 @@ def download_video(url):
         return temp_file.name
     return None
 
-def cleanup_old_files(directory, age_limit_seconds=20):
-    """Deletes files older than 'age_limit_seconds' in the given directory."""
+def cleanup_old_files(directory, file_extension='.mp4', age_limit_seconds=20):
+    """Deletes files with a specific extension and older than 'age_limit_seconds' in the given directory."""
     current_time = time.time()
     for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        if os.path.isfile(file_path) and current_time - os.path.getmtime(file_path) > age_limit_seconds:
-            os.remove(file_path)
+        if filename.endswith(file_extension):
+            file_path = os.path.join(directory, filename)
+            if os.path.isfile(file_path) and current_time - os.path.getmtime(file_path) > age_limit_seconds:
+                os.remove(file_path)
 
 def main():
     st.title('YouTube Video Downloader')
@@ -39,7 +40,7 @@ def main():
                     mime="video/mp4"
                 )
             # Schedule a cleanup for old files
-            cleanup_old_files(os.path.dirname(filepath))
+            cleanup_old_files(gettempdir())
         else:
             st.error('Download failed. Check the URL and try again.')
 
